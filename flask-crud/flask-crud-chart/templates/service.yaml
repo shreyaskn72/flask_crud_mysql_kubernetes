@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "flask-crud-chart.fullname" . }}-flask-api-service
+  labels:
+  {{- include "flask-crud-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.flaskApiService.type }}
+  selector:
+    app: flask-api
+    {{- include "flask-crud-chart.selectorLabels" . | nindent 4 }}
+  ports:
+  {{- .Values.flaskApiService.ports | toYaml | nindent 2 }}

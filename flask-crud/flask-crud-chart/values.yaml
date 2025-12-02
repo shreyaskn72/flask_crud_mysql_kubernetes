@@ -1,0 +1,40 @@
+flaskApi:
+  flaskApi:
+    env:
+      databaseUrl: mysql+pymysql://root:password@mysql:3306/itemsdb
+    image:
+      repository: flask-crud-api
+      tag: v4
+    imagePullPolicy: Never
+  nodeSelector: {}
+  replicas: 2
+  tolerations: []
+  topologySpreadConstraints: []
+flaskApiService:
+  ports:
+  - nodePort: 30008
+    port: 5000
+    targetPort: 5000
+  type: NodePort
+kubernetesClusterDomain: cluster.local
+mysql:
+  mysql:
+    env:
+      mysqlDatabase: itemsdb
+    image:
+      repository: mysql
+      tag: "8"
+  nodeSelector: {}
+  ports:
+  - port: 3306
+    targetPort: 0
+  replicas: 1
+  tolerations: []
+  topologySpreadConstraints: []
+  type: ClusterIP
+  volumeClaims:
+    mysqlStorage:
+      requests:
+        storage: 1Gi
+mysqlSecret:
+  mysqlRootPassword: ""

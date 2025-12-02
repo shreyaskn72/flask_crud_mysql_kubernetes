@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "flask-crud-chart.fullname" . }}-flask-api
+  labels:
+  {{- include "flask-crud-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.flaskApi.replicas }}
+  selector:
+    matchLabels:
+      app: flask-api
+    {{- include "flask-crud-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: flask-api
+      {{- include "flask-crud-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: DATABASE_URL
+          value: {{ quote .Values.flaskApi.flaskApi.env.databaseUrl }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.flaskApi.flaskApi.image.repository }}:{{ .Values.flaskApi.flaskApi.image.tag
+          | default .Chart.AppVersion }}
+        imagePullPolicy: {{ .Values.flaskApi.flaskApi.imagePullPolicy }}
+        name: flask-api
+        ports:
+        - containerPort: 5000
+        resources: {}
+      nodeSelector: {{- toYaml .Values.flaskApi.nodeSelector | nindent 8 }}
+      serviceAccountName: {{ include "flask-crud-chart.serviceAccountName" . }}
+      tolerations: {{- toYaml .Values.flaskApi.tolerations | nindent 8 }}
+      topologySpreadConstraints: {{- toYaml .Values.flaskApi.topologySpreadConstraints
+        | nindent 8 }}

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "flask-crud-chart.fullname" . }}-mysql
+  labels:
+  {{- include "flask-crud-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.mysql.type }}
+  selector:
+    app: mysql
+    {{- include "flask-crud-chart.selectorLabels" . | nindent 4 }}
+  ports:
+  {{- .Values.mysql.ports | toYaml | nindent 2 }}

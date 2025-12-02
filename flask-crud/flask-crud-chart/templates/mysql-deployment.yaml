@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "flask-crud-chart.fullname" . }}-mysql
+  labels:
+  {{- include "flask-crud-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.mysql.replicas }}
+  selector:
+    matchLabels:
+      app: mysql
+  serviceName: {{ include "flask-crud-chart.fullname" . }}-mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MYSQL_ROOT_PASSWORD
+              name: {{ include "flask-crud-chart.fullname" . }}-mysql-secret
+        - name: MYSQL_DATABASE
+          value: {{ quote .Values.mysql.mysql.env.mysqlDatabase }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.mysql.mysql.image.repository }}:{{ .Values.mysql.mysql.image.tag
+          | default .Chart.AppVersion }}
+        name: mysql
+        ports:
+        - containerPort: 3306
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-storage
+      nodeSelector: {{- toYaml .Values.mysql.nodeSelector | nindent 8 }}
+      serviceAccountName: {{ include "flask-crud-chart.serviceAccountName" . }}
+      tolerations: {{- toYaml .Values.mysql.tolerations | nindent 8 }}
+      topologySpreadConstraints: {{- toYaml .Values.mysql.topologySpreadConstraints
+        | nindent 8 }}
+  updateStrategy: {}
+  volumeClaimTemplates:
+  - metadata:
+      creationTimestamp: null
+      name: mysql-storage
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources: {{ .Values.mysql.volumeClaims.mysqlStorage | toYaml | nindent 8 }}
