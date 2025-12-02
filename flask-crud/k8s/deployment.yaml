@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: flask-api
-          image: flask-crud-api:latest
+          image: flask-crud-api:v2
           imagePullPolicy: Never
           env:
             - name: DATABASE_URL
