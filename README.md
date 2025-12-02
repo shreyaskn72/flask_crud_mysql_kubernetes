@@ -392,6 +392,26 @@ CREATE DATABASE itemsdb;
 
 ---
 
+
+# 🔧 **Alternative Quick Fix — Create the table directly in MySQL**
+
+```
+use itemsdb;
+```
+
+
+
+Then:
+
+```sql
+CREATE TABLE item (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100)
+);
+```
+
+But using SQLAlchemy to create the table is cleaner.
+
 # 🎉 You Now Have:
 
 ✔ Full CRUD Flask API
