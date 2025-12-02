@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flask-api
+  template:
+    metadata:
+      labels:
+        app: flask-api
+    spec:
+      containers:
+        - name: flask-api
+          image: flask-crud-api:latest
+          imagePullPolicy: Never
+          env:
+            - name: DATABASE_URL
+              value: "mysql+pymysql://root:password@mysql:3306/itemsdb"
+          ports:
+            - containerPort: 5000
